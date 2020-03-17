@@ -14,16 +14,14 @@ def solver_ncp(v_prev, Fext, M, J, mu, psi, h):
     nc = mu.shape[0]
 
     M_inv = np.linalg.inv(M)
-
     A = np.matmul(J, np.matmul(M_inv, J.T))
-
     A = (A + A.T)/2.0
 
     v_next = v_prev + h * np.matmul(M_inv, Fext)
-    
     b = np.matmul(J, v_next)
     btilde = b + np.hstack((psi/h,
                             np.zeros(2*nc)))
+
     d = np.diagonal(A)
     x = np.zeros(3*nc)
 
@@ -45,7 +43,7 @@ def solver_ncp(v_prev, Fext, M, J, mu, psi, h):
             #Project on circle 
             x_ti, x_oi = project_circle(np.array([x_ti, x_oi]), mu[i]*x[i])
 
-            x[i + nc]   = x_ti
+            x[i +   nc] = x_ti
             x[i + 2*nc] = x_oi
 
     JxFext = np.matmul(J.T, x) + Fext*h
