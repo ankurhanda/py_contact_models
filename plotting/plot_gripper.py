@@ -83,6 +83,8 @@ surf_finger2 = []
 surf_wrist = []
 plane_surface = []
 
+a_circle = []
+
 for time_step in range(0, states_np.shape[1]):
 
     q_i = states_np[:, time_step]
@@ -100,6 +102,23 @@ for time_step in range(0, states_np.shape[1]):
     surf_sphere = ax.plot_surface(x_s, y_s, z_s, 
                                   color=[0.1, 0.5, 0.5, 0.4],
                                 linewidth=2, antialiased=True)
+
+    theta = np.linspace(0, 2*np.pi, 50)
+    x = r * np.cos(theta)
+    y = r * np.sin(theta)
+    # x, y = np.meshgrid(x, y)
+    z = np.zeros_like(x)
+
+
+    if time_step > 0:
+        a_circle.remove()
+
+    from matplotlib.patches import Circle, PathPatch
+    import mpl_toolkits.mplot3d.art3d as art3d
+    val = np.mean(z_s)
+    p = Circle((0, 0), 0.11-val, color=[0.1, 0.5, 0.5, 0.1])
+    a_circle = ax.add_patch(p)
+    art3d.pathpatch_2d_to_3d(p, z=0, zdir="z")
 
     #Fingers
     if time_step > 0:
