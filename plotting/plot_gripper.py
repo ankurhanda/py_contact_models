@@ -98,19 +98,20 @@ for time_step in range(0, states_np.shape[1]):
         surf_sphere.remove()
     
     surf_sphere = ax.plot_surface(x_s, y_s, z_s, 
-                                  cmap=cm.winter, linewidth=0, antialiased=True)
+                                  color=[0.1, 0.5, 0.5, 0.4],
+                                linewidth=2, antialiased=True)
 
     #Fingers
     if time_step > 0:
         surf_finger1.remove()
 
-    surf_finger1 = ax.plot_wireframe(xf, yf + q_i[7] + l, zf + q_i[11], cmap=cm.coolwarm,
+    surf_finger1 = ax.plot_surface(xf, yf + q_i[7] + l, zf + q_i[11], color=[0.5, 0.5, 0.5, 0.4],
                        linewidth=2, antialiased=True)
 
     if time_step > 0:
         surf_finger2.remove()
 
-    surf_finger2 = ax.plot_wireframe(xf, yf + q_i[8] - l, zf + q_i[11], cmap=cm.coolwarm,
+    surf_finger2 = ax.plot_surface(xf, yf + q_i[8] - l, zf + q_i[11], color=[0.5, 0.5, 0.5, 0.4],
                        linewidth=2, antialiased=True)
 
     # Gripper 
