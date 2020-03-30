@@ -39,12 +39,11 @@ plt.axis('off')
 lims = np.array([-3, 3, -3, 3, 0, 4])*r
 lims[5] = 4*r + 2*l
 
+# Sphere ball 
 x_s, y_s, z_s = sphere(m-1)
-
 x_vec = np.reshape(x_s, (-1, 1))*r
 y_vec = np.reshape(y_s, (-1, 1))*r
 z_vec = np.reshape(z_s, (-1, 1))*r
-
 pts_sphere = np.hstack((x_vec, y_vec, z_vec))
 
 q0 = states_np[:, 0]
@@ -68,9 +67,6 @@ xf = 0.010*np.array([[1, -1, -1,  1,  1], [1, -1, -1,  1,  1]])
 yf = l*np.array([[1,  1, -1, -1,  1],[1,  1, -1, -1,  1]])
 zf = 0.150*np.array([[ 0,  0,  0,  0,  0],  [1,  1,  1,  1,  1]])
 
-# Plane
-X, Y = np.meshgrid(np.linspace(-0.15, 0.15, 2), np.linspace(-0.15, 0.15, 2))
-
 ax.set_xlim(lims[0], lims[1])
 ax.set_ylim(lims[2], lims[3])
 ax.set_zlim(lims[4], lims[5])
@@ -83,7 +79,7 @@ surf_finger2 = []
 surf_wrist = []
 plane_surface = []
 
-a_circle = []
+shadow_circle = []
 
 for time_step in range(0, states_np.shape[1]):
 
@@ -106,18 +102,17 @@ for time_step in range(0, states_np.shape[1]):
     theta = np.linspace(0, 2*np.pi, 50)
     x = r * np.cos(theta)
     y = r * np.sin(theta)
-    # x, y = np.meshgrid(x, y)
     z = np.zeros_like(x)
 
-
+    # shadow of the sphere 
     if time_step > 0:
-        a_circle.remove()
+        shadow_circle.remove()
 
     from matplotlib.patches import Circle, PathPatch
     import mpl_toolkits.mplot3d.art3d as art3d
     val = np.mean(z_s)
     p = Circle((0, 0), 0.11-val, color=[0.1, 0.5, 0.5, 0.1])
-    a_circle = ax.add_patch(p)
+    shadow_circle = ax.add_patch(p)
     art3d.pathpatch_2d_to_3d(p, z=0, zdir="z")
 
     #Fingers
