@@ -35,7 +35,7 @@ def solver_ncp(v_prev, Fext, M, J, mu, psi, h):
             min_di = min(d[i + nc], d[i + 2*nc])
 
             #Tangent 
-            x_ti = x[i + nc] - (np.dot(A[i + nc, :], x) + btilde[i + nc])/min_di
+            x_ti = x[i +   nc] - (np.dot(A[i +   nc, :], x) + btilde[i +   nc])/min_di
 
             #Other 
             x_oi = x[i + 2*nc] - (np.dot(A[i + 2*nc, :], x) + btilde[i + 2*nc])/min_di
