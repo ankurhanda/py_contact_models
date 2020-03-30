@@ -47,62 +47,43 @@ z_vec = np.reshape(z_s, (-1, 1))*r
 
 pts_sphere = np.hstack((x_vec, y_vec, z_vec))
 
-
 q0 = states_np[:, 0]
 Y  = np.matmul(pts_sphere , quat.quat2mat(states_np[3:7, 0])) + q0[0:3].T 
-
 x_s = Y[:, 0].reshape(m, m)
 y_s = Y[:, 1].reshape(m, m)
 z_s = Y[:, 2].reshape(m, m)
-
-surf_sphere = ax.plot_wireframe(x_s, y_s, z_s, cmap=cm.coolwarm,
-                       linewidth=0, antialiased=False)
-
 
 # Gripper (palm) mesh
 xg = 0.050 * np.array([[0, 0, 0, 0, 0], [1, -1, -1,  1, 1], [1, -1, -1,  1,  1], [0, 0, 0, 0, 0]])
 yg = 0.075 * np.array([[0, 0, 0, 0, 0], [1,  1, -1, -1, 1], [1,  1, -1, -1,  1], [0, 0, 0, 0, 0]])
 zg =    2*l* np.array([[0, 0, 0, 0, 0], [0, 0, 0, 0, 0], [1, 1, 1, 1, 1], [1, 1, 1, 1, 1]])
 
-surf_gripper = ax.plot_surface(xg + q0[9], yg + q0[10], zg + q0[11] + 0.15, cmap=cm.coolwarm,
-                       linewidth=0, antialiased=False)
-
-
 # Wrist 
 [x_cyl,y_cyl,z_cyl] = cylinder([0.025, 0.025], 26)
 z_cyl[1,:] = 4*r + 2*l + 0.02
-
 z_cyl_copy = np.copy(z_cyl)
-
-surf_wrist = ax.plot_surface(x_cyl, y_cyl, z_cyl, cmap=cm.coolwarm,
-                       linewidth=0, antialiased=False)
-
 
 #Fingers 
 xf = 0.010*np.array([[1, -1, -1,  1,  1], [1, -1, -1,  1,  1]])
 yf = l*np.array([[1,  1, -1, -1,  1],[1,  1, -1, -1,  1]])
 zf = 0.150*np.array([[ 0,  0,  0,  0,  0],  [1,  1,  1,  1,  1]])
 
-surf_finger1 = ax.plot_surface(xf, yf + q0[7] + l, zf + q0[11], cmap=cm.coolwarm,
-                       linewidth=0, antialiased=False)
-
-surf_finger2 = ax.plot_surface(xf, yf + q0[8] - l, zf + q0[11], cmap=cm.coolwarm,
-                       linewidth=0, antialiased=False)
-
 # Plane
 X, Y = np.meshgrid(np.linspace(-0.15, 0.15, 2), np.linspace(-0.15, 0.15, 2))
-plane_surface = ax.plot_wireframe(X, 
-                    Y,
-                    np.array([[0, 0], [0, 0]]),
-                    color=[0.5, 0.5, 0.5, 0.01], linewidth=1, antialiased=True)
-
 
 ax.set_xlim(lims[0], lims[1])
 ax.set_ylim(lims[2], lims[3])
 ax.set_zlim(lims[4], lims[5])
 plt.show()
 
-for time_step in range(1, states_np.shape[1]):
+surf_sphere = []
+surf_gripper = []
+surf_finger1 = []
+surf_finger2 = []
+surf_wrist = []
+plane_surface = []
+
+for time_step in range(0, states_np.shape[1]):
 
     q_i = states_np[:, time_step]
     quat_i = q_i[3:7]
@@ -113,37 +94,43 @@ for time_step in range(1, states_np.shape[1]):
     z_s = Y[:, 2].reshape(m, m)
 
     # Sphere 
-    surf_sphere.remove()
+    if time_step > 0:
+        surf_sphere.remove()
+    
     surf_sphere = ax.plot_surface(x_s, y_s, z_s, 
                                   cmap=cm.winter, linewidth=0, antialiased=True)
 
-
     #Fingers
+    if time_step > 0:
+        surf_finger1.remove()
 
-    surf_finger1.remove()
     surf_finger1 = ax.plot_wireframe(xf, yf + q_i[7] + l, zf + q_i[11], cmap=cm.coolwarm,
                        linewidth=2, antialiased=True)
 
-    surf_finger2.remove()
+    if time_step > 0:
+        surf_finger2.remove()
+
     surf_finger2 = ax.plot_wireframe(xf, yf + q_i[8] - l, zf + q_i[11], cmap=cm.coolwarm,
                        linewidth=2, antialiased=True)
 
-
     # Gripper 
-    surf_gripper.remove()
+    if time_step > 0:
+        surf_gripper.remove()
     surf_gripper = ax.plot_surface(xg + q_i[9], yg + q_i[10], zg + q_i[11] + 0.15, 
                                    color=[0.5, 0.5, 0.5, 0.2], linewidth=1, antialiased=True)
-
-    
+ 
     # Wrist 
-    surf_wrist.remove()
+    if time_step > 0:
+        surf_wrist.remove()
     z_cyl[0,:] = z_cyl_copy[0,:] + q_i[11] + 0.15 + 2*l
     surf_wrist = ax.plot_surface(x_cyl, y_cyl, z_cyl, color=[0.5, 0.5, 0.5, 0.4],
                        linewidth=1, antialiased=True)
 
     # Plane 
-    plane_surface.remove()
-    X, Y = np.meshgrid(np.linspace(-0.15, 0.15, 2), np.linspace(-0.15, 0.15, 2))
+    if time_step > 0:
+        plane_surface.remove()
+
+    X, Y = np.meshgrid(np.linspace(lims[0], lims[1], 2), np.linspace(lims[0], lims[1], 2))
     plane_surface = ax.plot_surface(X, 
                     Y,
                     np.array([[0, 0], [0, 0]]),
@@ -153,8 +140,6 @@ for time_step in range(1, states_np.shape[1]):
     fig.canvas.draw()                     
     fig.canvas.flush_events()
     time.sleep(0.01)
-
-    
-
+  
 plt.ioff()
 plt.show()
