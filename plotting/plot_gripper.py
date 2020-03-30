@@ -151,6 +151,11 @@ for time_step in range(0, states_np.shape[1]):
                     np.array([[0, 0], [0, 0]]),
                     color=[0.5, 0.5, 0.5, 0.2], linewidth=1, antialiased=True)
 
+    '''
+        If we want to make a video out of these pngs we need to run the following command:
+        ffmpeg -framerate 5 -i gripper_%04d.png -c:v libx264 -pix_fmt yuv420p -crf 25 output.mp4
+    '''
+
     fig.savefig("gripper_{:04d}.png".format(time_step))
     fig.canvas.draw()                     
     fig.canvas.flush_events()
